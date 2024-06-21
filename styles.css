@@ -1,0 +1,72 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: beige;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#title {
+    margin: 20px;
+    font-size: 50px;
+}
+
+#screen {
+    font-size: 45px;
+    width: 410px;
+    height: 80px;
+    background-color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    border-radius: 5px;
+
+}
+
+#calculator {
+    background-color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 675px;
+    width: 430px;
+    border-radius: 5px;
+    border: black, solid, 3px;
+}
+
+#zero {
+    height: 80px;
+    width: 250px;
+
+}
+
+#decimal, #one, #two, #three, #four, #five, #six, #seven, #eight, #nine, #zero {
+    background-color: white;
+}
+
+#AC, #DEL, #equals {
+    background-color: lightblue;
+}
+
+
+#divide, #divideround, #plus, #minus, #multiply {
+    background-color: orange;
+}
+
+button {
+    background-color: pink;
+    height: 80px;
+    width: 80px;
+    flex-shrink: 0;
+    border-radius: 5px;
+    border-color: black;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
