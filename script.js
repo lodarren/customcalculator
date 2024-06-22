@@ -1,38 +1,47 @@
 let numberOne = "";
 let numberTwo = "";
 let operator = null;
-const screen = document.getElementById('screen');
 let degrees = true; // if this is true, then we are using degrees, otherwise we are using radians
 let nextOp = false; // if this is true, then clicking another number will delete the previous answer
 
-function setup() {
+// Constants here
+const SCREEN = document.getElementById('screen');
+const MAXDIGITS = 15;
 
+// Initializes each of the buttons with their corresponding functions. 
+function setup() {
+    // Special functions that directly numberOne, numberTwo and operator
     document.getElementById("equals").addEventListener("click", () => {evaluate()});
     document.getElementById("AC").addEventListener("click", () => {clear()});
 
+    // Functions with unique functionality
     document.getElementById("deg").addEventListener("click", (e) => {degree(e)});
     document.getElementById("DEL").addEventListener("click", () => {del()});
+
+    // Functions that only take in one argument
     document.getElementById("decimal").addEventListener("click", () => {decimal()});
-    
-    document.getElementById("percent").addEventListener("click", () => singleOperator(function(a) {return a * 0.01}))
-    document.getElementById("negative").addEventListener("click", () => singleOperator(function(a) {return a * -1}))
-    document.getElementById("factorial").addEventListener("click", () => singleOperator(factorial))
-    document.getElementById("ln").addEventListener("click", () => singleOperator(Math.log))
+    document.getElementById("percent").addEventListener("click", () => singleOperator(function(a) {return a * 0.01}));
+    document.getElementById("negative").addEventListener("click", () => singleOperator(function(a) {return a * -1}));
+    document.getElementById("factorial").addEventListener("click", () => singleOperator(factorial));
+    document.getElementById("ln").addEventListener("click", () => singleOperator(Math.log));
 
-    document.getElementById("sin").addEventListener("click", () => trig(Math.sin))
-    document.getElementById("cos").addEventListener("click", () => trig(Math.cos))
-    document.getElementById("tan").addEventListener("click", () => trig(Math.tan))
+    // Trig functions
+    document.getElementById("sin").addEventListener("click", () => trig(Math.sin));
+    document.getElementById("cos").addEventListener("click", () => trig(Math.cos));
+    document.getElementById("tan").addEventListener("click", () => trig(Math.tan));
 
-    document.getElementById("divide").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "/"; operator = divide;}});
-    document.getElementById("divideround").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "//"; operator = divideround;}});
-    document.getElementById("plus").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "+"; operator = add;}})
-    document.getElementById("minus").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "-"; operator = subtract;}});
-    document.getElementById("multiply").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "*"; operator = multiply;}});
-    document.getElementById("nPr").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "nPr"; operator = nPr;}})
-    document.getElementById("nCr").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "nCr"; operator = nCr;}})
-    document.getElementById("power").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "^"; operator = power;}})
-    document.getElementById("log").addEventListener("click", () => {if (!numberTwo) {screen.innerText = "log"; operator = getBaseLog;}})
+    // Functions that take in two arguments 
+    document.getElementById("divide").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "/"; operator = divide;}});
+    document.getElementById("divideround").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "//"; operator = divideround;}});
+    document.getElementById("plus").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "+"; operator = add;}})
+    document.getElementById("minus").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "-"; operator = subtract;}});
+    document.getElementById("multiply").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "*"; operator = multiply;}});
+    document.getElementById("nPr").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "nPr"; operator = nPr;}});
+    document.getElementById("nCr").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "nCr"; operator = nCr;}});
+    document.getElementById("power").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "^"; operator = power;}});
+    document.getElementById("log").addEventListener("click", () => {if (!numberTwo) {SCREEN.innerText = "log"; operator = getBaseLog;}});
 
+    // Functions that input numbers into the calculator
     document.getElementById("zero").addEventListener("click", () =>  appendToDisplay("0"));
     document.getElementById("one").addEventListener("click", () => appendToDisplay("1"));
     document.getElementById("two").addEventListener("click", () => appendToDisplay("2"));
@@ -43,40 +52,49 @@ function setup() {
     document.getElementById("seven").addEventListener("click", () => appendToDisplay("7"));
     document.getElementById("eight").addEventListener("click", () => appendToDisplay("8"));
     document.getElementById("nine").addEventListener("click", () => appendToDisplay("9"));
-    document.getElementById("e").addEventListener("click", () => appendToDisplay(Math.E))
-    document.getElementById("pi").addEventListener("click", () => appendToDisplay(Math.PI))
+    document.getElementById("e").addEventListener("click", () => appendToDisplay(Math.E));
+    document.getElementById("pi").addEventListener("click", () => appendToDisplay(Math.PI));
 
-
-    screen.innerText = "0";
+    // Initialize
+    format("0");
 }
 
-function clear(e) {
+// Resets the calculator to initial state
+function clear() {
     numberOne = "";
     numberTwo = "";
     operator = null;
-    screen.innerText = "0";
+    format("0");
 }
 
+// Adds a value to either numberOne or numberTwo
 function appendToDisplay(value) {
-    // dont allow multiple zeros
+    if ((numberOne == "0" && value == "0") || (numberTwo == "0" && value == "0")) {
+        return;
+    }
+    
     if (! operator) {
-        if (nextOp) {
+        if (nextOp || numberOne == "0") {
             numberOne = value;
-            screen.innerText = numberOne;
             nextOp = false;
         } else {
-            numberOne += value;
-            screen.innerText = numberOne;
+            numberOne += value; 
         }
+        format(numberOne);
     } else {
-        numberTwo += value;
-        screen.innerText = numberTwo;
+        if (numberTwo == "0") {
+            numberTwo = value;
+        } else {
+            numberTwo += value;
+        }
+        format(numberTwo);
     }
 }
 
+// Performs a trig function and displays it
 function trig(trigfunction) {
     if (! numberOne && ! numberTwo) {
-        screen.innerText = "ERROR";
+        SCREEN.innerText = "ERROR";
     }
 
     result = 1;
@@ -93,12 +111,13 @@ function trig(trigfunction) {
         numberTwo = result.toString();
     }
 
-    screen.innerText = result.toString();
+    format(result.toString());
 }
 
+// Performs a singleOperator function and displays it
 function singleOperator(op) {
     if (! numberOne && ! numberTwo) {
-        screen.innerText = "ERROR";
+        SCREEN.innerText = "ERROR";
     }
 
     result = ""
@@ -110,99 +129,38 @@ function singleOperator(op) {
         numberTwo = result.toString();
     }
 
-    screen.innerText = result.toString();
+    format(result.toString());
 }
 
+// Evaluates numberOne (operation) numberTwo
 function evaluate() {
     if (! numberOne || ! numberTwo || ! operator) {
-        screen.innerText = "ERROR";
+        SCREEN.innerText = "ERROR";
     } else {
         result = operator(parseFloat(numberOne), parseFloat(numberTwo)).toString();
         numberOne = result;
         numberTwo = ""
         operator = null;
-        screen.innerText = result;
-        //TODO: have a rounder
+        format(result);
         nextOp = true;
     }
 }
 
-function del() {
-    //todo
-}
-
-function decimal() {
-    //todo
-}
-
-function add(a, b) {
-    return a + b;
-}
-
-function subtract(a, b) {
-    return a - b;
-}
-
-function multiply(a, b) {
-    return a * b;
-}
-
-function divide(a, b) {
-    if (b == 0) {
-        return "lol";
-    } else {
-        return a / b;
-    }  
-}
-
-function divideround(a, b) {
-    if (b == 0) {
-        return "lol";
-    } else {
-        return Math.round(a / b);
-    }  
-}
-
-function factorial(number) {
-    if (typeof(number) != "number") {
-        number = parseInt(number);
+// Formats display so that only MAXDIGITS are displayed at a time 
+function format(text) {
+    if (text.length > MAXDIGITS) {
+        if (text.includes('.')) {
+            text = text.slice(text.length - MAXDIGITS);
+        } else {
+            text = text.slice(0, - (text.length - MAXDIGITS));
+        }
     }
+    
 
-    if (number < 1) {
-        return 1;
-    }
-
-    return number * factorial (number - 1);
+    SCREEN.innerText = text;
 }
 
-function nPr(a, b) {
-    if (b > a) {
-        return "nice try";
-    }
-
-    return factorial(a) / (factorial(b - a));
-} 
-
-function nCr(a, b) {
-    if (b > a) {
-        return "nice try";
-    }
-
-    return factorial(a) / (factorial(b) * factorial(b - a));
-} 
-
-function getBaseLog(a, b) {
-    if (b == 0) {
-        return "b is 0 lol";
-    }
-
-    return Math.log(a) / Math.log(b);
-}
-
-function power(a, b) {
-    return Math.pow(a, b);
-}
-
+// Switches calculator from degrees to radians mode and vice versa
 function degree(e) {
     if (degrees == true) {
         degrees = false;
@@ -216,4 +174,128 @@ function degree(e) {
     
 }
 
+// Deletes the last character of either numberOne or numberTwo
+function del() {
+    if ((numberOne == "") || (numberOne == "0")) {
+        return;
+    }
+    
+    if (! operator) {
+        if (numberOne.length == 1) {
+            numberOne = "0";
+        } else {
+            numberOne = numberOne.slice(0, - 1);
+        }
+        format(numberOne);
+    } else {
+        if (numberTwo == "" || numberTwo == "0") {
+            return;
+        }
+
+        if (numberTwo.length == 1) {
+            numberTwo = "0";
+        } else {
+            numberTwo = numberTwo.slice(0, - 1);
+        }
+        format(numberTwo);
+    }
+}
+
+// multiplies a number by 0.01
+function decimal() {   
+    if (! numberOne && ! numberTwo) {
+        SCREEN.innerText = "ERROR";
+    }
+
+    result = ""
+    if (! numberTwo) {
+        numberOne += ".";
+        result =  numberOne + "0";
+    } else {
+        numberTwo += ".";
+        result =  numberTwo + "0";
+    }
+
+    format(result.toString());
+}
+
+// Adds two numbers
+function add(a, b) {
+    return a + b;
+}
+
+// Subtracts two numbers
+function subtract(a, b) {
+    return a - b;
+}
+
+// Multiplies two numbers
+function multiply(a, b) {
+    return a * b;
+}
+
+// Divides two numbers
+function divide(a, b) {
+    if (b == 0) {
+        return "lol";
+    } else {
+        return a / b;
+    }  
+}
+
+// Divides two numbers and rounds the result
+function divideround(a, b) {
+    if (b == 0) {
+        return "lol";
+    } else {
+        return Math.round(a / b);
+    }  
+}
+
+// Performs the factorial function on the number
+function factorial(number) {
+    if (typeof(number) != "number") {
+        number = parseInt(number);
+    }
+
+    if (number < 1) {
+        return 1;
+    }
+
+    return number * factorial (number - 1);
+}
+
+// Computes the number of permutations of two numbers
+function nPr(a, b) {
+    if (b > a) {
+        return "nice try";
+    }
+
+    return factorial(a) / (factorial(b - a));
+} 
+
+// Computes the number of combinations of two numbers
+function nCr(a, b) {
+    if (b > a) {
+        return "nice try";
+    }
+
+    return factorial(a) / (factorial(b) * factorial(b - a));
+} 
+
+// Computes log_b(a)
+function getBaseLog(a, b) {
+    if (b == 0) {
+        return "b is 0 lol";
+    }
+
+    return Math.log(a) / Math.log(b);
+}
+
+// Computes a raised to b's power
+function power(a, b) {
+    return Math.pow(a, b);
+}
+
+// Calculator starts here 
 setup();
